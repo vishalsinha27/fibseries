@@ -3,16 +3,16 @@ services:
     - docker
 
 before_install:
-    - docker build -t vs/fibseries -f ./client/Dockerfile.dev ./client
+    - docker build -t vs27/fibseries -f ./client/Dockerfile.dev ./client
     
 script:
-    - docker run -e CI=true vs/fibseries npm test
+    - docker run -e CI=true vs27/fibseries npm test
 
 after_success:
-    - docker build -t vs27/fibseries-client ./client 
-    - docker build -t vs27/fibseries-nginx ./nginx 
-    - docker build -t vs27/fibseries-server ./server 
-    - docker build -t vs27/fibseries-worker ./worker 
+    - docker build -t vs27/fibseries-client -f ./client/Dockerfile ./client 
+    - docker build -t vs27/fibseries-nginx  -f ./nginx/Dockerfile ./nginx 
+    - docker build -t vs27/fibseries-server -f ./server/Dockerfile ./server 
+    - docker build -t vs27/fibseries-worker -f ./worker/Dockerfile ./worker 
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
     - docker push vs27/fibseries-client
     - docker push vs27/fibseries-nginx
