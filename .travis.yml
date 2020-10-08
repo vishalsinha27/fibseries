@@ -1,0 +1,21 @@
+sudo required
+services:
+    - docker
+
+before_install:
+    - docker build -t vs/fibseries -f ./client/Dockerfile.dev ./client
+    
+script:
+    - docker run -e CI=true vs/fibseries npm test
+
+after_success:
+    - docker build -t vs27/fibseries-client ./client 
+    - docker build -t vs27/fibseries-nginx ./nginx 
+    - docker build -t vs27/fibseries-server ./server 
+    - docker build -t vs27/fibseries-worker ./worker 
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+    - docker push vs27/fibseries-client
+    - docker push vs27/fibseries-nginx
+    - docker push vs27/fibseries-server
+    - docker push vs27/fibseries-worker
+
